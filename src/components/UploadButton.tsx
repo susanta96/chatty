@@ -29,9 +29,7 @@ const UploadDropzone = ({
     useState<number>(0)
   const { toast } = useToast()
 
-  const { startUpload } = useUploadThing(
-    isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
-  )
+  const { startUpload } = useUploadThing('freePlanUploader')
 
   const { mutate: startPolling } = trpc.getFile.useMutation(
     {
@@ -71,6 +69,7 @@ const UploadDropzone = ({
         const res = await startUpload(acceptedFile)
 
         if (!res) {
+          clearInterval(progressInterval);
           return toast({
             title: 'Something went wrong',
             description: 'Please try again later',
@@ -83,6 +82,7 @@ const UploadDropzone = ({
         const key = fileResponse?.key
 
         if (!key) {
+          clearInterval(progressInterval);
           return toast({
             title: 'Something went wrong',
             description: 'Please try again later',
@@ -136,7 +136,7 @@ const UploadDropzone = ({
                         : ''
                     }
                     value={uploadProgress}
-                    className='h-1 w-full bg-zinc-200'
+                    className='h-2 w-full bg-zinc-200'
                   />
                   {uploadProgress === 100 ? (
                     <div className='flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2'>

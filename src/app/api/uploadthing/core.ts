@@ -8,7 +8,7 @@ import {
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
-import { getPineconeClient, pinecone } from '@/lib/pinecone'
+import { getPineconeClient } from '@/lib/pinecone'
 // import { getUserSubscriptionPlan } from '@/lib/stripe'
 // import { PLANS } from '@/config/stripe'
 
@@ -20,9 +20,9 @@ const middleware = async () => {
 
   if (!user || !user.id) throw new Error('Unauthorized')
 
-  const subscriptionPlan = await getUserSubscriptionPlan()
+  // const subscriptionPlan = await getUserSubscriptionPlan()
 
-  return { subscriptionPlan, userId: user.id }
+  return { userId: user.id }
 }
 
 const onUploadComplete = async ({
@@ -36,6 +36,7 @@ const onUploadComplete = async ({
     url: string
   }
 }) => {
+  console.log(file.key, file.name, file.url);
   const isFileExist = await db.file.findFirst({
     where: {
       key: file.key,
@@ -49,7 +50,7 @@ const onUploadComplete = async ({
       key: file.key,
       name: file.name,
       userId: metadata.userId,
-      url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
+      url: file.url || `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
       uploadStatus: 'PROCESSING',
     },
   })
@@ -67,30 +68,30 @@ const onUploadComplete = async ({
 
     const pagesAmt = pageLevelDocs.length
 
-    const { subscriptionPlan } = metadata
-    const { isSubscribed } = subscriptionPlan
+    // const { subscriptionPlan } = metadata
+    // const { isSubscribed } = subscriptionPlan
 
-    const isProExceeded =
-      pagesAmt >
-      PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf
-    const isFreeExceeded =
-      pagesAmt >
-      PLANS.find((plan) => plan.name === 'Free')!
-        .pagesPerPdf
+    // const isProExceeded =
+    //   pagesAmt >
+    //   PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf
+    // const isFreeExceeded =
+    //   pagesAmt >
+    //   PLANS.find((plan) => plan.name === 'Free')!
+    //     .pagesPerPdf
 
-    if (
-      (isSubscribed && isProExceeded) ||
-      (!isSubscribed && isFreeExceeded)
-    ) {
-      await db.file.update({
-        data: {
-          uploadStatus: 'FAILED',
-        },
-        where: {
-          id: createdFile.id,
-        },
-      })
-    }
+    // if (
+    //   (isSubscribed && isProExceeded) ||
+    //   (!isSubscribed && isFreeExceeded)
+    // ) {
+    //   await db.file.update({
+    //     data: {
+    //       uploadStatus: 'FAILED',
+    //     },
+    //     where: {
+    //       id: createdFile.id,
+    //     },
+    //   })
+    // }
 
     // vectorize and index entire document
     const pinecone = await getPineconeClient();
