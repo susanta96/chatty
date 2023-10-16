@@ -45,7 +45,7 @@ export const POST = async (req: NextRequest) => {
   })
 
   const pinecone = await getPineconeClient()
-  const pineconeIndex = pinecone.Index('quill')
+  const pineconeIndex = pinecone.Index('chatty')
 
   const vectorStore = await PineconeStore.fromExistingIndex(
     embeddings,
@@ -110,7 +110,7 @@ export const POST = async (req: NextRequest) => {
     ],
   })
 
-  // @ts-ignore
+
   const stream = OpenAIStream(response, {
     async onCompletion(completion) {
       await db.message.create({

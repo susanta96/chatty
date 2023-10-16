@@ -107,7 +107,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
         return toast({
           title: "There was a problem sending this message",
           description: "Please refresh this page and try again",
-          variant: "destructive",
+          variant: "default",
         });
       }
 

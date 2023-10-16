@@ -59,6 +59,7 @@ const onUploadComplete = async ({
     const response = await fetch(
       `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
     )
+    console.log('response', response);
 
     const blob = await response.blob()
 
@@ -67,7 +68,7 @@ const onUploadComplete = async ({
     const pageLevelDocs = await loader.load()
 
     const pagesAmt = pageLevelDocs.length
-
+      console.log(pageLevelDocs, pagesAmt);
     // const { subscriptionPlan } = metadata
     // const { isSubscribed } = subscriptionPlan
 
@@ -105,7 +106,6 @@ const onUploadComplete = async ({
       pageLevelDocs,
       embeddings,
       {
-        // @ts-ignore
         pineconeIndex,
         namespace: createdFile.id,
       }
@@ -120,6 +120,7 @@ const onUploadComplete = async ({
       },
     })
   } catch (err) {
+    console.log(err)
     await db.file.update({
       data: {
         uploadStatus: 'FAILED',
