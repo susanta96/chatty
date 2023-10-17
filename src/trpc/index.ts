@@ -10,8 +10,9 @@ export const appRouter = router({
     const { getUser } = getKindeServerSession();
     const user = getUser();
 
-    if (!user.id || !user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
-
+    if (!user || !user.id || !user.email) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
     // check if the user is in the database
     const dbUser = await db.user.findFirst({
       where: {
@@ -36,6 +37,9 @@ export const appRouter = router({
     return await db.file.findMany({
       where: {
         userId
+      },
+      include: {
+        messages: true
       }
     })
   }),

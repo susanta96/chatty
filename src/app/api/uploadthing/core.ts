@@ -101,13 +101,13 @@ const onUploadComplete = async ({
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,
     })
-
+    // console.log(pinecone, pineconeIndex, embeddings)
     await PineconeStore.fromDocuments(
       pageLevelDocs,
       embeddings,
       {
         pineconeIndex,
-        namespace: createdFile.id,
+        // namespace: createdFile.id,
       }
     )
 

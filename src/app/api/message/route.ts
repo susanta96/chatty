@@ -7,8 +7,6 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { NextRequest } from "next/server";
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { openai } from "@/lib/openai";
-import { Completion } from "openai/resources/completions.mjs";
-import { ChatCompletionChunk } from "openai/resources/chat/index.mjs";
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
@@ -51,7 +49,7 @@ export const POST = async (req: NextRequest) => {
     embeddings,
     {
       pineconeIndex,
-      namespace: file.id,
+      // namespace: file.id,
     }
   )
 
